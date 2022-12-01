@@ -11,7 +11,19 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut elves: Vec<_> = input
+        .split("\n\n")
+        .map(|items| items
+            .lines()
+            .map(|num| num.parse::<u32>().unwrap())
+            .reduce(|acc, item| acc + item)
+            .unwrap()
+        )
+        .collect();
+
+    elves.sort_by(|a, b| b.cmp(a));
+
+    Some(elves.iter().take(3).sum())
 }
 
 fn main() {
@@ -33,6 +45,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let input = advent_of_code::read_file("examples", 1);
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(45000));
     }
 }
