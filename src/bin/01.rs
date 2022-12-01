@@ -4,20 +4,18 @@ pub fn part_one(input: &str) -> Option<u32> {
         .map(|items| items
             .lines()
             .map(|num| num.parse::<u32>().unwrap())
-            .reduce(|acc, item| acc + item)
-            .unwrap()
+            .sum()
         )
         .max()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut elves: Vec<_> = input
+    let mut elves: Vec<u32> = input
         .split("\n\n")
         .map(|items| items
             .lines()
             .map(|num| num.parse::<u32>().unwrap())
-            .reduce(|acc, item| acc + item)
-            .unwrap()
+            .sum()
         )
         .collect();
 
