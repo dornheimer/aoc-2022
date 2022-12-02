@@ -1,6 +1,6 @@
 extern crate core;
 
-#[derive(Debug, PartialEq)]
+#[derive(PartialEq)]
 enum Shape {
     ROCK,
     PAPER,
@@ -11,7 +11,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let total_points: u32 = input
         .lines()
         .map(|r| r.split_once(" ").unwrap())
-        .map(|(opponent, me)| get_result(get_move(opponent), get_move(me)))
+        .map(|(opponent, me)| get_result(get_shape(opponent), get_shape(me)))
         .sum();
 
     Some(total_points)
@@ -28,10 +28,7 @@ fn get_result(opponent: Shape, me: Shape) -> u32 {
     }
 
     // win
-    if (me == Shape::ROCK && opponent == Shape::SCISSOR)
-        || (me == Shape::PAPER && opponent == Shape::ROCK)
-        || (me == Shape::SCISSOR && opponent == Shape::PAPER)
-    {
+    if me == use_winning(opponent) {
         return 6 + get_points(me);
     }
 
@@ -39,7 +36,7 @@ fn get_result(opponent: Shape, me: Shape) -> u32 {
     get_points(me)
 }
 
-fn get_move(char: &str) -> Shape {
+fn get_shape(char: &str) -> Shape {
     match char {
         "A" | "X" => Shape::ROCK,
         "B" | "Y" => Shape::PAPER,
@@ -53,6 +50,22 @@ fn get_points(shape: Shape) -> u32 {
         Shape::ROCK => 1,
         Shape::PAPER => 2,
         Shape::SCISSOR => 3,
+    }
+}
+
+fn use_winning(shape: Shape) -> Shape {
+    match shape {
+        Shape::ROCK => Shape::PAPER,
+        Shape::PAPER => Shape::SCISSOR,
+        Shape::SCISSOR => Shape::ROCK,
+    }
+}
+
+fn use_losing(shape: Shape) -> Shape {
+    match shape {
+        Shape::ROCK => Shape::SCISSOR,
+        Shape::PAPER => Shape::ROCK,
+        Shape::SCISSOR => Shape::PAPER,
     }
 }
 
