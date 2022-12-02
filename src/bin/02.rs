@@ -1,5 +1,3 @@
-extern crate core;
-
 #[derive(PartialEq)]
 enum Shape {
     ROCK,
@@ -13,11 +11,19 @@ enum Strategy {
     WIN,
 }
 
+enum Result {
+    LOSS(Shape),
+    DRAW(Shape),
+    WIN(Shape),
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let total_points: u32 = input
         .lines()
-        .map(|r| r.split_once(" ").unwrap())
-        .map(|(opponent, me)| get_result(get_shape(opponent), get_shape(me)))
+        .map(|r| {
+            let (opponent, me) = r.split_once(' ').unwrap();
+            get_result(get_shape(opponent), get_shape(me))
+        })
         .sum();
 
     Some(total_points)
@@ -26,8 +32,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let total_points: u32 = input
         .lines()
-        .map(|r| r.split_once(" ").unwrap())
-        .map(|(opponent, me)| follow_strategy(get_shape(opponent), get_strategy(me)))
+        .map(|r| {
+            let (opponent, me) = r.split_once(' ').unwrap();
+            follow_strategy(get_shape(opponent), get_strategy(me))
+        })
         .sum();
 
     Some(total_points)
@@ -35,25 +43,30 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 fn follow_strategy(opponent: Shape, me: Strategy) -> u32 {
     match me {
-        Strategy::WIN => 6 + get_points(use_winning(opponent)),
-        Strategy::DRAW => 3 + get_points(opponent),
-        Strategy::LOSS => get_points(use_losing(opponent)),
+        Strategy::WIN => get_score_for_result(Result::WIN(use_winning(opponent))),
+        Strategy::DRAW => get_score_for_result(Result::DRAW(opponent)),
+        Strategy::LOSS => get_score_for_result(Result::LOSS(use_losing(opponent))),
     }
 }
 
 fn get_result(opponent: Shape, me: Shape) -> u32 {
-    // draw
     if me == opponent {
-        return 3 + get_points(me);
+        return get_score_for_result(Result::DRAW(me));
     }
 
-    // win
     if me == use_winning(opponent) {
-        return 6 + get_points(me);
+        return get_score_for_result(Result::WIN(me));
     }
 
-    // loss
-    get_points(me)
+    get_score_for_result(Result::LOSS(me))
+}
+
+fn get_score_for_result(result: Result) -> u32 {
+    match result {
+        Result::WIN(shape) => 6 + get_points(shape),
+        Result::LOSS(shape) => get_points(shape),
+        Result::DRAW(shape) => 3 + get_points(shape),
+    }
 }
 
 fn get_shape(char: &str) -> Shape {
@@ -61,7 +74,7 @@ fn get_shape(char: &str) -> Shape {
         "A" | "X" => Shape::ROCK,
         "B" | "Y" => Shape::PAPER,
         "C" | "Z" => Shape::SCISSOR,
-        _ => panic!("unknown input"),
+        _ => unreachable!(),
     }
 }
 
@@ -70,7 +83,7 @@ fn get_strategy(char: &str) -> Strategy {
         "X" => Strategy::LOSS,
         "Y" => Strategy::DRAW,
         "Z" => Strategy::WIN,
-        _ => panic!("unknown input"),
+        _ => unreachable!(),
     }
 }
 
