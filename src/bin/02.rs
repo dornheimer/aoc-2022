@@ -7,6 +7,12 @@ enum Shape {
     SCISSOR,
 }
 
+enum Strategy {
+    LOSS,
+    DRAW,
+    WIN,
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let total_points: u32 = input
         .lines()
@@ -18,7 +24,21 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let total_points: u32 = input
+        .lines()
+        .map(|r| r.split_once(" ").unwrap())
+        .map(|(opponent, me)| follow_strategy(get_shape(opponent), get_strategy(me)))
+        .sum();
+
+    Some(total_points)
+}
+
+fn follow_strategy(opponent: Shape, me: Strategy) -> u32 {
+    match me {
+        Strategy::WIN => 6 + get_points(use_winning(opponent)),
+        Strategy::DRAW => 3 + get_points(opponent),
+        Strategy::LOSS => get_points(use_losing(opponent)),
+    }
 }
 
 fn get_result(opponent: Shape, me: Shape) -> u32 {
@@ -41,6 +61,15 @@ fn get_shape(char: &str) -> Shape {
         "A" | "X" => Shape::ROCK,
         "B" | "Y" => Shape::PAPER,
         "C" | "Z" => Shape::SCISSOR,
+        _ => panic!("unknown input"),
+    }
+}
+
+fn get_strategy(char: &str) -> Strategy {
+    match char {
+        "X" => Strategy::LOSS,
+        "Y" => Strategy::DRAW,
+        "Z" => Strategy::WIN,
         _ => panic!("unknown input"),
     }
 }
@@ -88,6 +117,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let input = advent_of_code::read_file("examples", 2);
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(12));
     }
 }
