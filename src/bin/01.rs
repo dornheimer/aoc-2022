@@ -1,22 +1,14 @@
 pub fn part_one(input: &str) -> Option<u32> {
     input
         .split("\n\n")
-        .map(|items| items
-            .lines()
-            .map(|num| num.parse::<u32>().unwrap())
-            .sum()
-        )
+        .map(|items| items.lines().map(|num| num.parse::<u32>().unwrap()).sum())
         .max()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut elves: Vec<u32> = input
         .split("\n\n")
-        .map(|items| items
-            .lines()
-            .map(|num| num.parse::<u32>().unwrap())
-            .sum()
-        )
+        .map(|items| items.lines().map(|num| num.parse::<u32>().unwrap()).sum())
         .collect();
 
     elves.sort_by(|a, b| b.cmp(a));
