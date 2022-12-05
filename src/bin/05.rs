@@ -51,14 +51,9 @@ pub fn part_two(input: &str) -> Option<String> {
 
     instructions.lines().for_each(|l| {
         let i = Instruction::from_str(l).unwrap();
-
-        let from_copy = supplies[i.from].clone();
-        let (_, cargo) = from_copy.split_at(supplies[i.from].len() - i.amount);
+        let index = supplies[i.from].len() - i.amount;
+        let cargo = supplies[i.from].split_off(index);
         supplies[i.to].extend(cargo);
-
-        (0..i.amount).for_each(|_n| {
-            supplies[i.from].pop();
-        });
     });
 
     Some(get_top_crates(supplies))
