@@ -88,13 +88,13 @@ fn main() {
 
 fn get_stacks(row: &str) -> Vec<Option<char>> {
     let mut stack: Vec<Option<char>> = vec![];
-    row.chars().skip(1).enumerate().for_each(|(ix, c) | {
-       if ix % 4 == 0 {
-           stack.push(match c.is_whitespace() {
-               true => None,
-               false => Some(c)
-           });
-       }
+    row.chars().skip(1).enumerate().for_each(|(ix, c)| {
+        if ix % 4 == 0 {
+            stack.push(match c.is_whitespace() {
+                true => None,
+                false => Some(c),
+            });
+        }
     });
 
     stack
