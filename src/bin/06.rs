@@ -12,7 +12,9 @@ fn find_message_start(input: &str, length: usize) -> Option<u32> {
     for (i, _c) in input.chars().enumerate() {
         let mut unique = HashSet::with_capacity(length);
         if i >= (length - 1) {
-            let is_unique = input[i-(length-1)..=i].chars().all(|c| unique.insert(c));
+            let is_unique = input[i - (length - 1)..=i]
+                .chars()
+                .all(|c| unique.insert(c));
             if is_unique {
                 return Some(i as u32 + 1);
             }
