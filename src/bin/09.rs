@@ -96,7 +96,7 @@ fn count_tail_positions(input: &str, num_knots: usize) -> usize {
                     Direction::Down => position_head.y -= 1,
                 };
 
-                for i in (0..knots.len()).skip(1) {
+                for i in 1..knots.len() {
                     let diff = knots[i - 1] - knots[i];
                     if !is_touching(&diff) {
                         let diff_unit = diff_to_unit(&diff);
