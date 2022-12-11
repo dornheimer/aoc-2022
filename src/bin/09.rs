@@ -71,39 +71,17 @@ impl FromStr for Motion {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut position_head = Coordinate::default();
-    let mut position_tail = Coordinate::default();
-    let mut visited = HashSet::new();
-    visited.insert(position_tail);
-
-    input
-        .lines()
-        .map(|l| Motion::from_str(l).unwrap())
-        .for_each(|m| {
-            for _step in 0..m.amount {
-                match m.direction {
-                    Direction::Left => position_head.x -= 1,
-                    Direction::Right => position_head.x += 1,
-                    Direction::Up => position_head.y += 1,
-                    Direction::Down => position_head.y -= 1,
-                };
-
-                let diff = position_head - position_tail;
-                if !is_touching(&diff) {
-                    position_tail = position_tail + diff_to_unit(&diff);
-                }
-
-                visited.insert(position_tail.clone());
-            }
-        });
-
-    Some(visited.len() as u32)
+    Some(count_tail_positions(input, 2) as u32)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut knots = vec![Coordinate::default(); 10];
+    Some(count_tail_positions(input, 10) as u32)
+}
+
+fn count_tail_positions(input: &str, num_knots: usize) -> usize {
+    let mut knots = vec![Coordinate::default(); num_knots];
     let mut visited = HashSet::new();
-    visited.insert(knots[9].clone());
+    visited.insert(knots[knots.len() - 1].clone());
 
     input
         .lines()
@@ -126,11 +104,11 @@ pub fn part_two(input: &str) -> Option<u32> {
                     }
                 }
 
-                visited.insert(knots[9].clone());
+                visited.insert(knots[knots.len() - 1].clone());
             }
         });
 
-    Some(visited.len() as u32)
+    visited.len()
 }
 
 fn is_touching(diff: &Coordinate) -> bool {
