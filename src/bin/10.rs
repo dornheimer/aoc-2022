@@ -67,8 +67,6 @@ pub fn part_two(input: &str) -> Option<String> {
             register += value_to_add;
         }
 
-        println!("cycle {cycle} instruction {instruction:?} register {register} current row {current_row}");
-
         if cycle % 40 == 0 {
             current_row += 1;
         }
@@ -78,7 +76,6 @@ pub fn part_two(input: &str) -> Option<String> {
 }
 
 fn draw_sprite(crt: &mut [[char; 40]], position: usize, register: usize, current_row: usize) {
-    println!("{}", register);
     if position == register {
         crt[current_row][register] = '#';
     }
@@ -90,9 +87,6 @@ fn draw_sprite(crt: &mut [[char; 40]], position: usize, register: usize, current
     if register > 0 && position == register - 1 {
         crt[current_row][register - 1] = '#';
     }
-
-    let row: String = (0..WIDTH).map(|x| crt[current_row][x]).collect();
-    println!("position {position} {}", row);
 }
 
 fn print_crt(crt: &[[char; 40]]) -> String {
