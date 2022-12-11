@@ -4,7 +4,7 @@ use std::hash::Hash;
 use std::ops::{Add, Sub};
 use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash, Copy)]
 struct Coordinate {
     x: isize,
     y: isize,
@@ -71,8 +71,8 @@ impl FromStr for Motion {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let mut position_head = Coordinate { x: 0, y: 0 };
-    let mut position_tail = Coordinate { x: 0, y: 0 };
+    let mut position_head = Coordinate::default();
+    let mut position_tail = Coordinate::default();
     let mut visited = HashSet::new();
     visited.insert(position_tail);
 
@@ -101,7 +101,36 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let mut knots = vec![Coordinate::default(); 10];
+    let mut visited = HashSet::new();
+    visited.insert(knots[9].clone());
+
+    input
+        .lines()
+        .map(|l| Motion::from_str(l).unwrap())
+        .for_each(|m| {
+            for _step in 0..m.amount {
+                let mut position_head = &mut knots[0];
+                match m.direction {
+                    Direction::Left => position_head.x -= 1,
+                    Direction::Right => position_head.x += 1,
+                    Direction::Up => position_head.y += 1,
+                    Direction::Down => position_head.y -= 1,
+                };
+
+                for i in (0..knots.len()).skip(1) {
+                    let diff = knots[i - 1] - knots[i];
+                    if !is_touching(&diff) {
+                        let diff_unit = diff_to_unit(&diff);
+                        knots[i] = knots[i] + diff_unit;
+                    }
+                }
+
+                visited.insert(knots[9].clone());
+            }
+        });
+
+    Some(visited.len() as u32)
 }
 
 fn is_touching(diff: &Coordinate) -> bool {
@@ -147,8 +176,21 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {
+    fn test_part_two_simple() {
         let input = advent_of_code::read_file("examples", 9);
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(1));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let input = "R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20";
+        assert_eq!(part_two(&input), Some(36));
     }
 }
